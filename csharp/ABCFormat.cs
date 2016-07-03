@@ -1,7 +1,7 @@
 /// <summary>
 /// Anemone Build Configuration-format node. Use <see cref="ParseFile(string)"/> to create.
 /// </summary>
-private class ABCFormat
+internal class ABCFormat
 {
     /// <summary>
     /// Parses an .abc file.
@@ -10,9 +10,9 @@ private class ABCFormat
     /// <returns>The root node in the ABC-file format structure</returns>
     internal static ABCFormat ParseFile(string path)
     {
-        if (!File.Exists(path)) return null;
+        if (!System.IO.File.Exists(path)) return s_NullNode;
 
-        var lines = File.ReadAllLines(path);
+        var lines = System.IO.File.ReadAllLines(path);
         ABCFormat root = new ABCFormat("root");
         ABCFormat currentNode = root;
 
@@ -49,8 +49,8 @@ private class ABCFormat
     private static readonly ABCFormat s_NullNode = new ABCFormat(string.Empty);
     private string m_Key;
     private ABCFormat m_Parent;
-    private Dictionary<string, string> m_Values = new Dictionary<string, string>();
-    private Dictionary<string, ABCFormat> m_Nodes = new Dictionary<string, ABCFormat>();
+    private System.Collections.Generic.Dictionary<string, string> m_Values = new System.Collections.Generic.Dictionary<string, string>();
+    private System.Collections.Generic.Dictionary<string, ABCFormat> m_Nodes = new System.Collections.Generic.Dictionary<string, ABCFormat>();
 
     /// <summary>
     /// Gets or sets the subnodes of this node
@@ -117,3 +117,4 @@ private class ABCFormat
     /// <returns>This key, followed by the amount of settings stored in this node, followed by the amount of configurations beneath this node.</returns>
     public override string ToString() { return m_Key; }
 }
+
