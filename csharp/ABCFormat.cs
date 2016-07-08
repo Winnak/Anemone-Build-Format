@@ -10,7 +10,7 @@ internal class ABCFormat
     /// <returns>The root node in the ABC-file format structure</returns>
     internal static ABCFormat ParseFile(string path)
     {
-        if (!System.IO.File.Exists(path)) return s_NullNode;
+        if (!System.IO.File.Exists(path)) { return NullNode; }
 
         var lines = System.IO.File.ReadAllLines(path);
         ABCFormat root = new ABCFormat("root");
@@ -19,16 +19,16 @@ internal class ABCFormat
         for (int i = 0; i < lines.Length; i++)
         {
             string line = lines[i];
-            if (line.IndexOf('#') != -1) line = line.Split('#')[0];
-            if (line.Trim() == string.Empty) continue;
-            if (line[0] != '\t') currentNode = root;
+            if (line.IndexOf('#') != -1) { line = line.Split('#')[0]; }
+            if (line.Trim() == string.Empty) { continue; }
+            if (line[0] != '\t') { currentNode = root; }
 
             for (int c = 0; c < line.Length; c++)
             {
                 if (line[c] == '=')
                 {
                     string key = line.Substring(0, c).Trim();
-                    if (key.Length == 0) break;
+                    if (key.Length == 0) { break; }
                     string value = line.Substring(c + 1, line.Length - c - 1).Trim();
                     currentNode.Set(key, value);
                     break;
@@ -36,7 +36,7 @@ internal class ABCFormat
                 else if (line[c] == ':')
                 {
                     string key = line.Substring(0, c).Trim();
-                    if (key.Length == 0) break;
+                    if (key.Length == 0) { break; }
                     currentNode = new ABCFormat(key, currentNode);
                     break;
                 }
@@ -46,7 +46,7 @@ internal class ABCFormat
         return root;
     }
 
-    private static readonly ABCFormat s_NullNode = new ABCFormat(string.Empty);
+    public static readonly ABCFormat NullNode = new ABCFormat(string.Empty);
     private string m_Key;
     private ABCFormat m_Parent;
     private System.Collections.Generic.Dictionary<string, string> m_Values = new System.Collections.Generic.Dictionary<string, string>();
@@ -62,13 +62,13 @@ internal class ABCFormat
         get
         {
             ABCFormat value;
-            if (!m_Nodes.TryGetValue(key, out value)) value = s_NullNode;
+            if (!m_Nodes.TryGetValue(key, out value)) { value = NullNode; }
             return value;
         }
         set
         {
-            if (m_Nodes.ContainsKey(key)) m_Nodes[key] = value;
-            else m_Nodes.Add(key, value);
+            if (m_Nodes.ContainsKey(key)) { m_Nodes[key] = value; }
+            else { m_Nodes.Add(key, value); }
             value.m_Parent = this;
         }
     }
@@ -82,7 +82,7 @@ internal class ABCFormat
     {
         m_Key = key;
         m_Parent = parent;
-        if (parent != null) parent[key] = this;
+        if (parent != null) { parent[key] = this; }
     }
 
     /// <summary>
@@ -93,9 +93,7 @@ internal class ABCFormat
     internal string Get(string key)
     {
         string value = null;
-        if (!m_Values.TryGetValue(key, out value))
-            if (m_Parent != null)
-                return m_Parent.Get(key);
+        if (!m_Values.TryGetValue(key, out value)) { if (m_Parent != null) { return m_Parent.Get(key); } }
         if (value == null) { value = string.Empty; }
         return value;
     }
@@ -107,8 +105,8 @@ internal class ABCFormat
     /// <param name="value">Setting value.</param>
     internal void Set(string key, string value)
     {
-        if (m_Values.ContainsKey(key)) m_Values[key] = value;
-        else m_Values.Add(key, value);
+        if (m_Values.ContainsKey(key)) { m_Values[key] = value; }
+        else { m_Values.Add(key, value); }
     }
 
     /// <summary>
@@ -117,4 +115,3 @@ internal class ABCFormat
     /// <returns>This key, followed by the amount of settings stored in this node, followed by the amount of configurations beneath this node.</returns>
     public override string ToString() { return m_Key; }
 }
-
